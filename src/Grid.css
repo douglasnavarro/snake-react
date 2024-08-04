@@ -1,0 +1,36 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-rows: repeat(12, 1fr);
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1px; /* Optional: to add space between cells */
+  width: 960px;
+  height: 960px;
+  padding: 0;
+  margin: 0;
+}
+
+.grid-cell {
+  border: 1px solid #ccc;
+  width: 80px;
+  height: 80px;
+  position: relative;
+}
+
+.cell-id {
+  font-size: 10px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-right: 4px;
+}
