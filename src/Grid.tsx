@@ -15,7 +15,10 @@ type UseSnake = {
 }
 
 const useSnake = (): UseSnake => {
-  const [snake, setSnake] = React.useState([{ row: 1, col: 1 }])
+  const [snake, setSnake] = React.useState([
+    { row: 1, col: 1 },
+    { row: 1, col: 0 },
+  ])
 
   const addPart = (row: number, col: number) =>
     setSnake((currentSnake) => [...currentSnake, { row, col }])
@@ -42,24 +45,33 @@ const Grid: React.FC = () => {
 
   return (
     <div className="grid">
-      {grid.flat().map((cell, index) => (
-        <div
-          key={index}
-          className="grid-cell"
-          style={{
-            gridRow: cell.row + 1,
-            gridColumn: cell.col + 1,
-            backgroundColor:
-              snake[0].col == cell.col && snake[0].row == cell.row
-                ? 'red'
-                : 'lightgray',
-          }}
-        >
-          <span className="cell-id">
-            ({cell.row}, {cell.col})
-          </span>
-        </div>
-      ))}
+      {grid.flat().map((cell, index) => {
+        const isHead = snake[0].row === cell.row && snake[0].col === cell.col
+        const isBody =
+          snake.some(
+            (part) => part.row === cell.row && part.col === cell.col
+          ) && !isHead
+
+        return (
+          <div
+            key={index}
+            className="grid-cell"
+            style={{
+              gridRow: cell.row + 1,
+              gridColumn: cell.col + 1,
+              backgroundColor: isHead
+                ? 'red' // Snake head color
+                : isBody
+                ? 'green' // Snake body color
+                : 'lightgray', // Default color
+            }}
+          >
+            <span className="cell-id">
+              ({cell.row}, {cell.col})
+            </span>
+          </div>
+        )
+      })}
       <button onClick={move}>Move</button>
     </div>
   )
