@@ -9,31 +9,49 @@ type SnakePart = {
   col: number
 }
 
+type SnakeDirection = 'right' | 'left' | 'up' | 'down'
+
 type UseSnake = {
   snake: Array<SnakePart>
   move: () => void
 }
 
 const useSnake = (): UseSnake => {
+  const [direction, _] = React.useState<SnakeDirection>('down')
   const [snake, setSnake] = React.useState([
     { row: 1, col: 1 },
     { row: 1, col: 0 },
   ])
+
+  const moveHead = ({ row, col }: SnakePart, direction: SnakeDirection) => {
+    switch (direction) {
+      case 'right':
+        return { row, col: col + 1 }
+      case 'down':
+        return { row: row + 1, col }
+      case 'left':
+        return { row, col: col - 1 }
+      case 'up':
+        return { row: row - 1, col }
+    }
+  }
 
   const addPart = (row: number, col: number) =>
     setSnake((currentSnake) => [...currentSnake, { row, col }])
 
   const move: UseSnake['move'] = () =>
     setSnake((currentSnake) =>
-      currentSnake.map(({ row, col }) => ({ row, col: col + 1 }))
+      currentSnake.map((part, i) => {
+        return i == 0
+          ? moveHead(part, direction)
+          : { row: currentSnake[i - 1].row, col: currentSnake[i - 1].col }
+      })
     )
 
   return { snake, move }
 }
 
 const Grid: React.FC = () => {
-  // These have to match the CSS; Something to generalize later.
-
   const { snake, move } = useSnake()
 
   const grid = Array.from({ length: ROWS }, (_, rowIndex) =>
@@ -59,11 +77,7 @@ const Grid: React.FC = () => {
             style={{
               gridRow: cell.row + 1,
               gridColumn: cell.col + 1,
-              backgroundColor: isHead
-                ? 'red' // Snake head color
-                : isBody
-                ? 'green' // Snake body color
-                : 'lightgray', // Default color
+              backgroundColor: isHead ? 'red' : isBody ? 'green' : 'lightgray',
             }}
           >
             <span className="cell-id">
