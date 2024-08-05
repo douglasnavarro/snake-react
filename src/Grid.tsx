@@ -14,6 +14,7 @@ type SnakeDirection = 'right' | 'left' | 'up' | 'down'
 type UseSnake = {
   snake: Array<SnakePart>
   move: () => void
+  grow: () => void
 }
 
 const useSnake = (): UseSnake => {
@@ -23,7 +24,10 @@ const useSnake = (): UseSnake => {
     { row: 1, col: 0 },
   ])
 
-  const moveHead = ({ row, col }: SnakePart, direction: SnakeDirection) => {
+  const moveHead = (
+    { row, col }: SnakePart,
+    direction: SnakeDirection
+  ): SnakePart => {
     switch (direction) {
       case 'right':
         return { row, col: col + 1 }
@@ -36,8 +40,25 @@ const useSnake = (): UseSnake => {
     }
   }
 
-  const addPart = (row: number, col: number) =>
-    setSnake((currentSnake) => [...currentSnake, { row, col }])
+  const addPart = (snake: Array<SnakePart>, direction: SnakeDirection) => {
+    const lastPart = snake[snake.length - 1]
+    let newPart: SnakePart
+    switch (direction) {
+      case 'right':
+        newPart = { row: lastPart.row, col: lastPart.col - 1 }
+        break
+      case 'down':
+        newPart = { row: lastPart.row - 1, col: lastPart.col }
+        break
+      case 'left':
+        newPart = { row: lastPart.row, col: lastPart.col + 1 }
+        break
+      case 'up':
+        newPart = { row: lastPart.row + 1, col: lastPart.col }
+        break
+    }
+    return [...snake, newPart]
+  }
 
   const move: UseSnake['move'] = () =>
     setSnake((currentSnake) =>
@@ -48,11 +69,15 @@ const useSnake = (): UseSnake => {
       })
     )
 
-  return { snake, move }
+  const grow: UseSnake['grow'] = () => {
+    setSnake((currentSnake) => addPart(currentSnake, direction))
+  }
+
+  return { snake, move, grow }
 }
 
 const Grid: React.FC = () => {
-  const { snake, move } = useSnake()
+  const { snake, move, grow } = useSnake()
 
   const grid = Array.from({ length: ROWS }, (_, rowIndex) =>
     Array.from({ length: COLS }, (_, colIndex) => ({
@@ -87,6 +112,7 @@ const Grid: React.FC = () => {
         )
       })}
       <button onClick={move}>Move</button>
+      <button onClick={grow}>Grow</button>
     </div>
   )
 }
