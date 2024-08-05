@@ -13,12 +13,14 @@ type SnakeDirection = 'right' | 'left' | 'up' | 'down'
 
 type UseSnake = {
   snake: Array<SnakePart>
+  direction: SnakeDirection
   move: () => void
   grow: () => void
+  setDirection: (newDirection: SnakeDirection) => void
 }
 
 const useSnake = (): UseSnake => {
-  const [direction, _] = React.useState<SnakeDirection>('down')
+  const [direction, setDirection] = React.useState<SnakeDirection>('right')
   const [snake, setSnake] = React.useState([
     { row: 1, col: 1 },
     { row: 1, col: 0 },
@@ -73,11 +75,17 @@ const useSnake = (): UseSnake => {
     setSnake((currentSnake) => addPart(currentSnake, direction))
   }
 
-  return { snake, move, grow }
+  return {
+    snake,
+    direction,
+    setDirection,
+    move,
+    grow,
+  }
 }
 
 const Grid: React.FC = () => {
-  const { snake, move, grow } = useSnake()
+  const { snake, direction, move, grow, setDirection } = useSnake()
 
   const grid = Array.from({ length: ROWS }, (_, rowIndex) =>
     Array.from({ length: COLS }, (_, colIndex) => ({
@@ -113,6 +121,8 @@ const Grid: React.FC = () => {
       })}
       <button onClick={move}>Move</button>
       <button onClick={grow}>Grow</button>
+      <button onClick={() => setDirection('down')}>Change direction</button>
+      <span>{direction}</span>
     </div>
   )
 }
