@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './Grid.css'
 
 const ROWS = 12
@@ -75,6 +75,18 @@ const useSnake = (): UseSnake => {
     setSnake((currentSnake) => addPart(currentSnake, direction))
   }
 
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown, true)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  const handleKeyDown = (e: { key: string }) => {
+    if (e.key === 'w') setDirection('up')
+    else if (e.key === 'd') setDirection('right')
+    else if (e.key === 'a') setDirection('left')
+    else if (e.key === 's') setDirection('down')
+  }
+
   return {
     snake,
     direction,
@@ -113,9 +125,9 @@ const Grid: React.FC = () => {
               backgroundColor: isHead ? 'red' : isBody ? 'green' : 'lightgray',
             }}
           >
-            <span className="cell-id">
+            {/* <span className="cell-id">
               ({cell.row}, {cell.col})
-            </span>
+            </span> */}
           </div>
         )
       })}
