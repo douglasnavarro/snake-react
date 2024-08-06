@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Grid.css'
 
 const ROWS = 12
@@ -20,8 +20,8 @@ type UseSnake = {
 }
 
 const useSnake = (): UseSnake => {
-  const [direction, setDirection] = React.useState<SnakeDirection>('right')
-  const [snake, setSnake] = React.useState([
+  const [direction, setDirection] = useState<SnakeDirection>('right')
+  const [snake, setSnake] = useState([
     { row: 1, col: 1 },
     { row: 1, col: 0 },
   ])
@@ -96,8 +96,43 @@ const useSnake = (): UseSnake => {
   }
 }
 
+const useGame = (
+  snake: Array<SnakePart>,
+  reward: { row: number; col: number },
+  resetReward: () => void,
+  growSnake: () => void
+) => {
+  const [score, setScore] = useState<number>(0)
+
+  useEffect(() => {
+    if (snake[0].row === reward.row && snake[0].col === reward.col) {
+      setScore((currentScore) => currentScore + 1)
+      resetReward()
+      growSnake()
+    }
+  }, [snake, reward])
+
+  return { score }
+}
+
 const Grid: React.FC = () => {
   const { snake, direction, move, grow, setDirection } = useSnake()
+
+  const [reward, setReward] = useState<{ row: number; col: number }>({
+    row: 3,
+    col: 3,
+  })
+
+  const { score } = useGame(
+    snake,
+    reward,
+    () =>
+      setReward({
+        row: Math.floor(Math.random() * ROWS),
+        col: Math.floor(Math.random() * COLS),
+      }),
+    grow
+  )
 
   const grid = Array.from({ length: ROWS }, (_, rowIndex) =>
     Array.from({ length: COLS }, (_, colIndex) => ({
@@ -114,6 +149,7 @@ const Grid: React.FC = () => {
           snake.some(
             (part) => part.row === cell.row && part.col === cell.col
           ) && !isHead
+        const isReward = cell.row === reward.row && cell.col === reward.col
 
         return (
           <div
@@ -122,7 +158,13 @@ const Grid: React.FC = () => {
             style={{
               gridRow: cell.row + 1,
               gridColumn: cell.col + 1,
-              backgroundColor: isHead ? 'red' : isBody ? 'green' : 'lightgray',
+              backgroundColor: isReward
+                ? 'orange'
+                : isHead
+                ? 'red'
+                : isBody
+                ? 'green'
+                : 'lightgray',
             }}
           >
             {/* <span className="cell-id">
@@ -134,7 +176,8 @@ const Grid: React.FC = () => {
       <button onClick={move}>Move</button>
       <button onClick={grow}>Grow</button>
       <button onClick={() => setDirection('down')}>Change direction</button>
-      <span>{direction}</span>
+      <span>Direction: {direction}</span>
+      <span>Score: {score}</span>
     </div>
   )
 }
