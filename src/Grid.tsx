@@ -65,7 +65,7 @@ const useSnake = (): UseSnake => {
   const move: UseSnake['move'] = () =>
     setSnake((currentSnake) =>
       currentSnake.map((part, i) => {
-        return i == 0
+        return i === 0
           ? moveHead(part, direction)
           : { row: currentSnake[i - 1].row, col: currentSnake[i - 1].col }
       })
@@ -100,9 +100,15 @@ const useGame = (
   snake: Array<SnakePart>,
   reward: { row: number; col: number },
   resetReward: () => void,
-  growSnake: () => void
+  growSnake: () => void,
+  moveSnake: () => void
 ) => {
   const [score, setScore] = useState<number>(0)
+
+  useEffect(() => {
+    const i = setInterval(moveSnake, 100)
+    return () => clearInterval(i)
+  })
 
   useEffect(() => {
     if (snake[0].row === reward.row && snake[0].col === reward.col) {
@@ -110,7 +116,7 @@ const useGame = (
       resetReward()
       growSnake()
     }
-  }, [snake, reward])
+  }, [snake, reward, growSnake, resetReward])
 
   return { score }
 }
@@ -131,7 +137,8 @@ const Grid: React.FC = () => {
         row: Math.floor(Math.random() * ROWS),
         col: Math.floor(Math.random() * COLS),
       }),
-    grow
+    grow,
+    move
   )
 
   const grid = Array.from({ length: ROWS }, (_, rowIndex) =>
