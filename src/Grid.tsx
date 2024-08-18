@@ -136,7 +136,7 @@ const useGame = (
 }
 
 const Grid: React.FC = () => {
-  const { snake, direction, move, grow, setDirection, resetSnake } = useSnake()
+  const { snake, move, grow, resetSnake } = useSnake()
 
   const [reward, setReward] = useState<{ row: number; col: number }>({
     row: 3,
@@ -195,11 +195,7 @@ const Grid: React.FC = () => {
           ></div>
         )
       })}
-      <button onClick={move}>Move</button>
-      <button onClick={grow}>Grow</button>
-      <button onClick={() => setDirection('down')}>Change direction</button>
       <button onClick={handleReset}>Reset</button>
-      <span>Direction: {direction}</span>
       <span>Score: {score}</span>
     </div>
   )
