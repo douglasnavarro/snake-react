@@ -84,10 +84,10 @@ const useSnake = (): UseSnake => {
   }, [])
 
   const handleKeyDown = (e: { key: string }) => {
-    if (e.key === 'w') setDirection('up')
-    else if (e.key === 'd') setDirection('right')
-    else if (e.key === 'a') setDirection('left')
-    else if (e.key === 's') setDirection('down')
+    if (e.key === 'w' || e.key === 'ArrowUp') setDirection('up')
+    else if (e.key === 'd' || e.key === 'ArrowRight') setDirection('right')
+    else if (e.key === 'a' || e.key === 'ArrowLeft') setDirection('left')
+    else if (e.key === 's' || e.key === 'ArrowDown') setDirection('down')
   }
 
   const resetSnake = () => {
