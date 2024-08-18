@@ -35,13 +35,13 @@ const useSnake = (): UseSnake => {
   ): SnakePart => {
     switch (direction) {
       case 'right':
-        return { row, col: col + 1 }
+        return { row, col: col + 1 === COLS ? 0 : col + 1 }
       case 'down':
-        return { row: row + 1, col }
+        return { row: row + 1 === ROWS ? 0 : row + 1, col }
       case 'left':
-        return { row, col: col - 1 }
+        return { row, col: col - 1 === -1 ? COLS - 1 : col - 1 }
       case 'up':
-        return { row: row - 1, col }
+        return { row: row - 1 === -1 ? ROWS - 1 : row - 1, col }
     }
   }
 
