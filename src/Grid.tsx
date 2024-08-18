@@ -17,14 +17,17 @@ type UseSnake = {
   move: () => void
   grow: () => void
   setDirection: (newDirection: SnakeDirection) => void
+  resetSnake: () => void
 }
+
+const initialSnake = [
+  { row: 1, col: 1 },
+  { row: 1, col: 0 },
+]
 
 const useSnake = (): UseSnake => {
   const [direction, setDirection] = useState<SnakeDirection>('right')
-  const [snake, setSnake] = useState([
-    { row: 1, col: 1 },
-    { row: 1, col: 0 },
-  ])
+  const [snake, setSnake] = useState(initialSnake)
 
   const moveHead = (
     { row, col }: SnakePart,
@@ -87,12 +90,18 @@ const useSnake = (): UseSnake => {
     else if (e.key === 's') setDirection('down')
   }
 
+  const resetSnake = () => {
+    setSnake(initialSnake)
+    setDirection('right')
+  }
+
   return {
     snake,
     direction,
     setDirection,
     move,
     grow,
+    resetSnake,
   }
 }
 
@@ -118,18 +127,23 @@ const useGame = (
     }
   }, [snake, reward, growSnake, resetReward])
 
-  return { score }
+  const resetGame = () => {
+    setScore(0)
+    resetReward()
+  }
+
+  return { score, resetGame }
 }
 
 const Grid: React.FC = () => {
-  const { snake, direction, move, grow, setDirection } = useSnake()
+  const { snake, direction, move, grow, setDirection, resetSnake } = useSnake()
 
   const [reward, setReward] = useState<{ row: number; col: number }>({
     row: 3,
     col: 3,
   })
 
-  const { score } = useGame(
+  const { score, resetGame } = useGame(
     snake,
     reward,
     () =>
@@ -140,6 +154,11 @@ const Grid: React.FC = () => {
     grow,
     move
   )
+
+  const handleReset = () => {
+    resetSnake()
+    resetGame()
+  }
 
   const grid = Array.from({ length: ROWS }, (_, rowIndex) =>
     Array.from({ length: COLS }, (_, colIndex) => ({
@@ -173,16 +192,13 @@ const Grid: React.FC = () => {
                 ? 'green'
                 : 'lightgray',
             }}
-          >
-            {/* <span className="cell-id">
-              ({cell.row}, {cell.col})
-            </span> */}
-          </div>
+          ></div>
         )
       })}
       <button onClick={move}>Move</button>
       <button onClick={grow}>Grow</button>
       <button onClick={() => setDirection('down')}>Change direction</button>
+      <button onClick={handleReset}>Reset</button>
       <span>Direction: {direction}</span>
       <span>Score: {score}</span>
     </div>
