@@ -16,7 +16,6 @@ type UseSnake = {
   direction: SnakeDirection
   move: () => void
   grow: () => void
-  setDirection: (newDirection: SnakeDirection) => void
   resetSnake: () => void
 }
 
@@ -28,6 +27,29 @@ const initialSnake = [
 const useSnake = (): UseSnake => {
   const [direction, setDirection] = useState<SnakeDirection>('right')
   const [snake, setSnake] = useState(initialSnake)
+
+  const isNewDirectionValid = (
+    currentDirection: SnakeDirection,
+    newDirection: SnakeDirection
+  ): boolean => {
+    if (
+      (['left', 'right'].includes(currentDirection) &&
+        ['up', 'down'].includes(newDirection)) ||
+      (['up', 'down'].includes(currentDirection) &&
+        ['left', 'right'].includes(newDirection))
+    ) {
+      return true
+    }
+    return false
+  }
+
+  const setValidDirection = React.useCallback(
+    (newDirection: SnakeDirection) => {
+      if (isNewDirectionValid(direction, newDirection))
+        setDirection(newDirection)
+    },
+    [direction]
+  )
 
   const moveHead = (
     { row, col }: SnakePart,
@@ -79,16 +101,19 @@ const useSnake = (): UseSnake => {
   }
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown, true)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [])
+    // Its important to define this here to avoid multiple event listeners
+    // created for multiple values of 'direction'
+    const handleKeyDown = (e: { key: string }) => {
+      if (e.key === 'w' || e.key === 'ArrowUp') setValidDirection('up')
+      else if (e.key === 'd' || e.key === 'ArrowRight')
+        setValidDirection('right')
+      else if (e.key === 'a' || e.key === 'ArrowLeft') setValidDirection('left')
+      else if (e.key === 's' || e.key === 'ArrowDown') setValidDirection('down')
+    }
 
-  const handleKeyDown = (e: { key: string }) => {
-    if (e.key === 'w' || e.key === 'ArrowUp') setDirection('up')
-    else if (e.key === 'd' || e.key === 'ArrowRight') setDirection('right')
-    else if (e.key === 'a' || e.key === 'ArrowLeft') setDirection('left')
-    else if (e.key === 's' || e.key === 'ArrowDown') setDirection('down')
-  }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [setValidDirection])
 
   const resetSnake = () => {
     setSnake(initialSnake)
@@ -98,7 +123,6 @@ const useSnake = (): UseSnake => {
   return {
     snake,
     direction,
-    setDirection,
     move,
     grow,
     resetSnake,
