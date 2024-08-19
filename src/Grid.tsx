@@ -17,6 +17,7 @@ type UseSnake = {
   move: () => void
   grow: () => void
   resetSnake: () => void
+  bitItself: boolean
 }
 
 const initialSnake = [
@@ -126,6 +127,9 @@ const useSnake = (): UseSnake => {
     move,
     grow,
     resetSnake,
+    bitItself: !!snake
+      .slice(1)
+      .some(({ row, col }) => snake[0].row === row && snake[0].col === col),
   }
 }
 
@@ -160,7 +164,7 @@ const useGame = (
 }
 
 const Grid: React.FC = () => {
-  const { snake, move, grow, resetSnake } = useSnake()
+  const { snake, move, grow, resetSnake, bitItself } = useSnake()
 
   const [reward, setReward] = useState<{ row: number; col: number }>({
     row: 3,
