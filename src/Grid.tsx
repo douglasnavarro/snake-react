@@ -180,16 +180,20 @@ const Grid: React.FC = () => {
     move
   )
 
-  const handleReset = () => {
+  const handleReset = React.useCallback(() => {
     resetSnake()
     resetGame()
-  }
+  }, [resetGame, resetSnake])
 
-  const grid = Array.from({ length: ROWS }, (_, rowIndex) =>
-    Array.from({ length: COLS }, (_, colIndex) => ({
-      row: rowIndex,
-      col: colIndex,
-    }))
+  const grid = React.useMemo(
+    () =>
+      Array.from({ length: ROWS }, (_, rowIndex) =>
+        Array.from({ length: COLS }, (_, colIndex) => ({
+          row: rowIndex,
+          col: colIndex,
+        }))
+      ),
+    []
   )
 
   useEffect(() => {
@@ -197,7 +201,7 @@ const Grid: React.FC = () => {
       alert(`Game over! Your score was ${score}`)
       handleReset()
     }
-  }, [bitItself])
+  }, [bitItself, score, handleReset])
 
   return (
     <>
