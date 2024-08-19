@@ -196,36 +196,48 @@ const Grid: React.FC = () => {
   )
 
   return (
-    <div className="grid">
-      {grid.flat().map((cell, index) => {
-        const isHead = snake[0].row === cell.row && snake[0].col === cell.col
-        const isBody =
-          snake.some(
-            (part) => part.row === cell.row && part.col === cell.col
-          ) && !isHead
-        const isReward = cell.row === reward.row && cell.col === reward.col
+    <>
+      <div
+        style={{
+          display: 'flex',
+          flex: 'row',
+          alignItems: 'center',
+          gap: '1rem',
+        }}
+      >
+        <h1>Score: {score}</h1>
+        <p>Use WASD or arrows to move</p>
+      </div>
+      <div className="grid">
+        {grid.flat().map((cell, index) => {
+          const isHead = snake[0].row === cell.row && snake[0].col === cell.col
+          const isBody =
+            snake.some(
+              (part) => part.row === cell.row && part.col === cell.col
+            ) && !isHead
+          const isReward = cell.row === reward.row && cell.col === reward.col
 
-        return (
-          <div
-            key={index}
-            className="grid-cell"
-            style={{
-              gridRow: cell.row + 1,
-              gridColumn: cell.col + 1,
-              backgroundColor: isReward
-                ? 'orange'
-                : isHead
-                ? 'red'
-                : isBody
-                ? 'green'
-                : 'lightgray',
-            }}
-          ></div>
-        )
-      })}
-      <button onClick={handleReset}>Reset</button>
-      <span>Score: {score}</span>
-    </div>
+          return (
+            <div
+              key={index}
+              className="grid-cell"
+              style={{
+                gridRow: cell.row + 1,
+                gridColumn: cell.col + 1,
+                backgroundColor: isReward
+                  ? 'orange'
+                  : isHead
+                  ? 'red'
+                  : isBody
+                  ? 'green'
+                  : 'lightgray',
+              }}
+            ></div>
+          )
+        })}
+        <button onClick={handleReset}>Reset</button>
+      </div>
+    </>
   )
 }
 
