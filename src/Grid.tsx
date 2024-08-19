@@ -33,15 +33,12 @@ const useSnake = (): UseSnake => {
     currentDirection: SnakeDirection,
     newDirection: SnakeDirection
   ): boolean => {
-    if (
+    return (
       (['left', 'right'].includes(currentDirection) &&
         ['up', 'down'].includes(newDirection)) ||
       (['up', 'down'].includes(currentDirection) &&
         ['left', 'right'].includes(newDirection))
-    ) {
-      return true
-    }
-    return false
+    )
   }
 
   const setValidDirection = React.useCallback(
