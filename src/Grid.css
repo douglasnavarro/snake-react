@@ -13,17 +13,19 @@ body {
   display: grid;
   grid-template-rows: repeat(12, 1fr);
   grid-template-columns: repeat(12, 1fr);
-  gap: 1px; /* Optional: to add space between cells */
-  width: 960px;
-  height: 960px;
+  gap: 1px;
+
+  width: 80vmin;
+  height: 80vmin;
+
   padding: 0;
   margin: 0;
 }
 
 .grid-cell {
-  border: 1px solid #ccc;
-  width: 80px;
-  height: 80px;
+  border: 1px solid white;
+  width: 100%;
+  height: 100%;
   position: relative;
 }
 
@@ -33,4 +35,8 @@ body {
   bottom: 0;
   right: 0;
   margin-right: 4px;
+}
+
+button {
+  margin: 4px;
 }
