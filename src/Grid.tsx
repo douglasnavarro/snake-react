@@ -195,6 +195,13 @@ const Grid: React.FC = () => {
     }))
   )
 
+  useEffect(() => {
+    if (bitItself) {
+      alert(`Game over! Your score was ${score}`)
+      handleReset()
+    }
+  }, [bitItself])
+
   return (
     <>
       <div
